@@ -88,18 +88,22 @@
             </div>
           </div>
           <!-- /.col -->
-          <div class="col-4">
+          {{-- <div class="col-4">
             <button type="submit" class="btn btn-primary btn-block">{{ __('Login') }}</button>
-          </div>
+          </div> --}}
           <!-- /.col -->
+          <div class="col-12">
+           <button type="submit" class="btn btn-primary btn-block"> <i class="fas fa-sign-in-alt mr-2"></i>{{ __('Login') }}</button>
+          </div>
+        
         </div>
       </form>
 
       <div class="social-auth-links text-center mb-3">
         <p>- OR -</p>
-        {{-- <a href="#" class="btn btn-block btn-primary">
-          <i class="fab fa-facebook mr-2"></i>  {{ __('Login') }}
-        </a> --}}
+        <a href="http://127.0.0.1:8000/" class="btn btn-block btn-primary">
+          <i class="fas fa-home mr-2"></i>  {{ __('Home') }}
+        </a>
         @if (Route::has('password.request'))
         <a href="{{ route('password.request') }}" class="btn btn-block btn-danger">
           <i class="fab fa-google-plus mr-2"></i> {{ __('Forgot Your Password?') }}

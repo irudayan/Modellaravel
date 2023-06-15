@@ -1,6 +1,19 @@
+<style>
+  .logo{
+    height: 50px !important;
+  width: 50px !important;
+  }
+  </style>
 <div class="sidebar">
+  <div class="login-logo">
+
+    <img class="logo" src="dist/img/bg-01.png"/>
+  
+    {{-- <a href="../../index2.html"><b>Login</b></a> --}}
+  </div>
 
     <!-- Sidebar Menu -->
+    
     <nav class="mt-2">
       <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
         <li class="nav-item menu-open">

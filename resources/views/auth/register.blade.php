@@ -66,6 +66,9 @@
                                 <button type="submit" class="btn btn-primary">
                                     {{ __('Register') }}
                                 </button>
+                                <a href="http://127.0.0.1:8000/" class="btn btn-block btn-primary">
+                                    <i class="fab fa-facebook mr-2"></i>  {{ __('Home') }}
+                                  </a>
                             </div>
                         </div>
                     </form>

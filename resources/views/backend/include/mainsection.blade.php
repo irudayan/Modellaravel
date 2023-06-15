@@ -65,8 +65,8 @@
             <table class="table table-bordered subsection-table">
                 <thead>
                     <tr>
-                      {{-- <th>mainsection name</th> --}}
-                        <th>Subsection Name</th>
+                      <th>Mainsection</th>
+                        <th width="8px">Subsection</th>
                         <th>description</th>
                         <th >Action</th>
                     </tr>
@@ -333,17 +333,44 @@ $('body').on('click', '.deleteSection', function () {
 // subsection
 
 
-      var subtable = $('.subsection-table').DataTable({
-        processing: true,
-        serverSide: true,
-        ajax: "{{ route('subsection') }}", // Use named route for the URL
-        columns: [
-          // {data: ''},
-          {data: 'subsectionname'},
-          {data: 'subdescription'},
-          {data: 'action', orderable: false, searchable: false},
-        ]
-      });
+    //   var subtable = $('.subsection-table').DataTable({
+    //     processing: true,
+    //     serverSide: true,
+    //     ajax: {
+    //     url: "{{ route('subsection') }}",
+    //     dataSrc: function(response) {
+    //         // Access the name value from the response
+    //         console.log(response.name);
+    //         return response.data;
+    //     }
+    // },
+    // columns:
+    //     [
+    //       {data: 'name'},
+    //       {data: 'subsectionname'},
+    //       {data: 'subdescription'},
+    //       {data: 'action', orderable: false, searchable: false},
+    //     ]
+    //   });
+
+    var subtable = $('.subsection-table').DataTable({
+    processing: true,
+    serverSide: true,
+    ajax: {
+        url: "{{ route('subsection') }}",
+        dataSrc: function(response) {
+            // Access the name value from the response
+            console.log(response.name);
+            return response.data;
+        }
+    },
+    columns: [
+        {data: 'name'},
+        {data: 'subsectionname'},
+        {data: 'subdescription'},
+        {data: 'action', orderable: false, searchable: false},
+    ]
+});
 
 
       // when click 
