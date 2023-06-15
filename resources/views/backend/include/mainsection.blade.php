@@ -38,7 +38,7 @@
                 <table class="table table-bordered data-table">
                     <thead>
                         <tr>
-                            <th width="90px">Main section</th>
+                            <th>Main section</th>
                             <th>description</th>
                             <th width="100px">Action</th>
                         </tr>
@@ -77,7 +77,6 @@
             </table>
       </div>
     </div>
-    
 
 
   {{-- main model --}}
@@ -92,7 +91,7 @@
           </button>
         </div>
         <div class="modal-body">
-          <form id="section-validation" name="section-validation">
+          <form id="section-validation-form" name="section-validation-form">
              @csrf
             <input type="hidden" name="section_id" id="section_id">
             <div class="form-group">
@@ -106,7 +105,7 @@
           </form>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-secondary" id="main-section-close" data-dismiss="modal">Close</button>
           <button type="button" class="btn btn-primary" id="saveBtn">Add</button>
         </div>
       </div>
@@ -145,17 +144,18 @@
            <input type="text" name="subsectionname" class="form-control" id="subsectionname">
          </div>
          <div class="form-group">
-           <label for="description" name="description" class="col-form-label">Description:<span class="mandatory">*</span></label>
-           <textarea class="form-control" name="description" id="description"></textarea>
+           <label for="description" name="subdescription" class="col-form-label">Description:<span class="mandatory">*</span></label>
+           <textarea class="form-control" name="subdescription" id="subdescription"></textarea>
          </div>
        </form>
      </div>
      <div class="modal-footer">
-       <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+       <button type="button" class="btn btn-secondary" id="sub-section-close" data-dismiss="modal">Close</button>
        <button type="button" class="btn btn-primary" id="subsaveBtn">Add</button>
      </div>
    </div>
  </div>
+</div>
 </div>
 </div>
 </section>
@@ -179,7 +179,7 @@ $(function (){
 
 // table show
 
-  var table = $('.data-table').DataTable({
+  var maintable = $('.data-table').DataTable({
     processing: true,
     serverSide: true,
       ajax: "{{ route('mainsection') }}",
@@ -194,7 +194,7 @@ $(function (){
   $('#section').click(function () {
         $('#saveBtn').val(" ");
         $('#section_id').val('');
-        $('#section-validation').trigger("reset");
+        $('#section-validation-form').trigger("reset");
         $('#exampleModal').modal('hide');
     });
 
@@ -202,7 +202,7 @@ $(function (){
 // save
     $(function() {
   // Initialize the validation plugin
-  $("#section-validation").validate({
+  $("#section-validation-form").validate({
     rules: {
       name: {
         required: true,
@@ -230,36 +230,36 @@ $(function (){
         dataType: 'json',
         success: function(data) {
           if (data.status === 'success'){
-          // success response
-          $(form).trigger("reset");
-          $('#exampleModal').modal('hide');
-          Swal.fire({
-            title: 'success',
-            text: 'Submitted successfully!',
-            icon: 'success',
-            confirmButtonText: 'OK'
-          }).then((result) => {
-            if (result.isConfirmed) {
-              window.location.reload();
-            }
-          });
-        }else if (data.status) {
-    // Name already exists response
-    $(form).trigger("reset");
-    $('#exampleModal').modal('hide');
-    Swal.fire({
-      title: 'Error',
-      text: 'Name already exists!',
-      icon: 'error',
-      confirmButtonText: 'OK'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        window.location.reload();
-      }
-    });
-  }
-},
-   
+            // success response
+            $(form).trigger("reset");
+            $('#exampleModal').modal('hide');
+            Swal.fire({
+              title: 'success',
+              text: 'Submitted successfully!',
+              icon: 'success',
+              confirmButtonText: 'OK'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                  $('#main-section-close').click();
+                  maintable.draw();
+                }
+            });
+          }else if (data.status) {
+            $(form).trigger("reset");
+            $('#exampleModal').modal('hide');
+            Swal.fire({
+              title: 'Error',
+              text: 'Name already exists!',
+              icon: 'error',
+              confirmButtonText: 'OK'
+            }).then((result) => {
+              if (result.isConfirmed) {
+                $('#main-section-close').click();
+                maintable.draw();
+              }
+            });
+          }
+        },
         error: function(xhr, status, error) {
           // Handle the error response
           console.log(xhr.responseText);
@@ -272,11 +272,9 @@ $(function (){
   // button click
   $('#saveBtn').click(function(e) {
     e.preventDefault();
-    $('#section-validation').submit();
+    $('#section-validation-form').submit();
   });
 });
-
-
 
 
 // edit
@@ -286,151 +284,151 @@ $('body').on('click', '.editSection', function () {
           $('#saveBtn').val(" ");
           $('#exampleModal').modal('show');
           $('#section_id').val(data.id);
-          $('#name').val(data.name);
+          $('#name').val(data.name).prop('disabled',true);
           $('#description').val(data.description);
       })
     });
 
-
-
-
-
     // delete
 $('body').on('click', '.deleteSection', function () {
-     var section_id = $(this).data("id");
-     confirm("Are You sure want to delete !");
-     $.ajax({
-         type: "DELETE",
-         url: "{{ url('sectiondelete') }}"+'/'+section_id,
-     success: function (data) {
-      $('#section-validation').trigger("reset");
-      $('#exampleModal').modal('hide');
-      Swal.fire({
-      title: 'Success',
-      text: 'Delated successfully!',
-      icon: 'success',
-      confirmButtonText: 'Delete'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        window.location.reload();  
-      }
+    var section_id = $(this).data("id");
+    confirm("Are you sure you want to delete!");
+
+    $.ajax({
+        type: "DELETE",
+        url: "{{ url('sectiondelete') }}"+'/'+section_id,
+        success: function (data) {
+            if (data.status === 'success') {
+                $('#exampleModal').modal('hide');
+                Swal.fire({
+                    title: 'Confirm',
+                    text: 'Are you sure you want to delete?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Delete',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        maintable.draw();
+                    }
+                });
+            } else if (data.status === 'failed') {
+                $('#exampleModal').modal('hide');
+                Swal.fire({
+                    title: 'Mainsection is there',
+                    text: 'Sub section are exist do not delete the main section!',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        maintable.draw();
+                    }
+                });
+            }
+        }
     });
-    }
-     });
- });
+});
+
 
 // subsection
 
 
-var table = $('.subsection-table').DataTable({
-  processing: true,
-  serverSide: true,
-  ajax: "{{ route('subsection') }}", // Use named route for the URL
-  columns: [
-    // {data: 'mainname'},
-    {data: 'subsectionname'},
-    {data: 'description'},
-    {data: 'action', orderable: false, searchable: false},
-  ]
-});
+      var subtable = $('.subsection-table').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: "{{ route('subsection') }}", // Use named route for the URL
+        columns: [
+          // {data: ''},
+          {data: 'subsectionname'},
+          {data: 'subdescription'},
+          {data: 'action', orderable: false, searchable: false},
+        ]
+      });
 
 
-// when click 
-$('#subsection').click(function () {
-        $('#subsaveBtn').val(" ");
-        $('#subsection_id').val('');
-        $('#subsection-validation').trigger("reset");
-        $('#subModal').modal('hide');
-    });
+      // when click 
+      $('#subsection').click(function () {
+              $('#subsaveBtn').val(" ");
+              $('#subsection_id').val('');
+              $('#subsection-validation').trigger("reset");
+              $('#subModal').modal('hide');
+          });
+
+      // save
+      $('#subsaveBtn').click(function (e) {
+        e.preventDefault();
+        $.ajax({
+          data: $('#subsection-validation').serialize(),
+          url: "{{ url('subsectionstore') }}",
+          type: "POST",
+          tocken:"CSRF",
+          dataType: 'json',
+          success: function (data) {
+            console.log(data);
+            $('#subsection-validation').trigger("reset");
+            $('#subModal').modal('hide');
+            Swal.fire({
+            title: 'Success',
+            text: 'submitted successfully!',
+            icon: 'success',
+            confirmButtonText: 'OK'
+          }).then((result) => {
+            if (result.isConfirmed) {
+              $('#sub-section-close').click();
+             subtable.draw();
+              
+            }
+          });
+
+          }
+        });
+      });
 
 
 
+          // edit
+      $('body').on('click', '.editsubSection', function () {
+        var subsection_id = $(this).data('id');
+   
+            $.get("{{ url('subsectionedit') }}" +'/' + subsection_id +'/edit', function (data) {
+                $('#subsaveBtn').val(" ");
+                $('#subModal').modal('show');
+                $('#sub-main-sectionname option[value='+data.section_id+']').attr('selected','selected');
+                $('#subsectionname').val(data.subsectionname);
+                $('#subdescription').val(data.subdescription);
+            })
+          });
+
+          // delete
+          $('body').on('click', '.deletesubSection', function () {
+          
+          var subsection_id = $(this).data("id");
+          confirm("Are You sure want to delete !");
+          $.ajax({
+              type: "DELETE",
+              url: "{{ url('subsectiondelete') }}"+'/'+subsection_id,
+              success: function (data){
+            console.log(data);
+            $('#subsection-validation').trigger("reset");
+            $('#subModal').modal('hide');
+            Swal.fire({
+            title: 'Success',
+            text: 'Deleted successfully!',
+            icon: 'Delete',
+            confirmButtonText: 'Delete'
+          }).then((result) => {
+            if (result.isConfirmed) {
+            subtable.draw();
+            }
+          });
+
+          }
+          });
+      });
 
   
-// save
-$('#subsaveBtn').click(function (e) {
-  e.preventDefault();
-  $.ajax({
-    data: $('#subsection-validation').serialize(),
-    url: "{{ url('subsectionstore') }}",
-    type: "POST",
-    tocken:"CSRF",
-    dataType: 'json',
-    success: function (data) {
-      console.log(data);
-      $('#subsection-validation').trigger("reset");
-      $('#subModal').modal('hide');
-      Swal.fire({
-      title: 'Success',
-      text: 'submitted successfully!',
-      icon: 'success',
-      confirmButtonText: 'OK'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        window.location.reload();
-        
-      }
-    });
-
-    }
   });
-});
-
-
-
-    // edit
-$('body').on('click', '.editsubSection', function () {
-      var subsection_id = $(this).data('id');
-      console.log(subsection_id);
-      $.get("{{ url('subsectionedit') }}" +'/' + subsection_id +'/edit', function (data) {
-          $('#subsaveBtn').val(" ");
-          $('#subModal').modal('show');
-          $('#subsection_id').val(data.id);
-          $('#subsectionname').val(data.subsectionname);
-          $('#description').val(data.description);
-      })
-    });
-
-    // delete
-    $('body').on('click', '.deletesubSection', function () {
-     
-     var subsection_id = $(this).data("id");
-     confirm("Are You sure want to delete !");
-     $.ajax({
-         type: "DELETE",
-         url: "{{ url('subsectiondelete') }}"+'/'+subsection_id,
-         success: function (data){
-      console.log(data);
-      $('#subsection-validation').trigger("reset");
-      $('#subModal').modal('hide');
-      Swal.fire({
-      title: 'Success',
-      text: 'Deleted successfully!',
-      icon: 'Delete',
-      confirmButtonText: 'Delete'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        window.location.reload();
-        
-      }
-    });
-
-    }
-     });
- });
-
-  
-});
-
-
-
-
-
-
-
-
 
 </script>
-
 
 @endsection

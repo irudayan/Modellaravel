@@ -8,7 +8,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>AdminLTE 3 | Log in</title>
+  <title>Shirne</title>
 
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -18,18 +18,31 @@
   <link rel="stylesheet" href="../../plugins/icheck-bootstrap/icheck-bootstrap.min.css">
   <!-- Theme style -->
   <link rel="stylesheet" href="../../dist/css/adminlte.min.css">
+
+  <style>
+    .logo{
+      height: 103px !important;
+    width: 131px !important;
+    }
+    </style>
+
+
 </head>
 <body class="hold-transition login-page">
 <div class="login-box">
-  <div class="login-logo">
-    <a href="../../index2.html"><b>Login</b></a>
-  </div>
+ 
   <!-- /.login-logo -->
   <div class="card">
     <div class="card-body login-card-body">
-      <p class="login-box-msg">Sign in to start your session</p>
+      {{-- <p class="login-box-msg">Sign in to start your session</p> --}}
 
       <form method="POST" action="{{ route('login') }}">
+        <div class="login-logo">
+
+          <img class="logo" src="dist/img/bg-01.png"/>
+        
+          {{-- <a href="../../index2.html"><b>Login</b></a> --}}
+        </div>
         @csrf
         <div class="input-group mb-3">
             {{-- <label for="email">{{ __('Email Address') }}</label> --}}

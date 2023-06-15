@@ -33,10 +33,12 @@ class SectionController extends Controller
                     ->addColumn('action', function($row){
    
                            $btn = '<a href="javascript:void(0)" data-toggle="tooltip"  
-                           data-id="'.$row->id.'" data-original-title="Edit" class="edit btn btn-primary btn-sm editSection">Edit</a>';
+                           data-id="'.$row->id.'" data-original-title="Edit" class="edit btn btn-primary btn-sm editSection">
+                           <i class="fas fa-edit"></i></a>';
    
                            $btn = $btn.' <a href="javascript:void(0)" data-toggle="tooltip"  
-                           data-id="'.$row->id.'" data-original-title="Delete" class="btn btn-danger btn-sm deleteSection">Delete</a>';
+                           data-id="'.$row->id.'" data-original-title="Delete" class="btn btn-danger btn-sm deleteSection">
+                           <i class="fas fa-trash"></i></a>';
     
                             return $btn;
                     })
@@ -96,24 +98,6 @@ class SectionController extends Controller
     return response()->json(['status' => 'failed', 'message' => 'Failed! Section not created']);
 }
 
-    
-
-
-    // public function checkDuplicateData(Request $request)
-    // {
-    //     $data = $request->get('data'); // Assuming 'data' is the key sent via AJAX
-    
-    //     // Check if the data already exists in the database
-    //     $existingData = YourModel::where('column', $data)->exists();
-    
-    //     return response()->json(['exists' => $existingData]);
-    // }
-    
-
-
-
-
-
 
     public function sectionedit($id)
     {
@@ -122,24 +106,28 @@ class SectionController extends Controller
         return response()->json($sectionedit);
     }
 
-    public function sectiondelete($id)
+    
+
+    public function sectiondelete(Request $request)
     {
-        Mainsection::find($id)->delete();
-      
-        return response()->json(['success'=>'Mainsection deleted successfully.']);
-    }
-
-    public function mainsectionshow(Request $request)
-    {
-
-        $val = $request->input('val');
-
-        $main = Mainsection::all();
-        if ($main) {
-            return response()->json(['status' => 'success', 'data' => $main]);
+        // Mainsection::find($id)->delete();
+        $id = $request->id;
+        $main = Mainsection::select('id')->where('id',$id)->first();
+        $subsection = subsection::select('id')->where('section_id',$main['id'])->count();
+       
+        if($subsection != 0){
+            return response()->json(['status' => 'failed', 'failed'=> "Sub section are exist do not delete the main section!"]);
+        }else{
+            $Mainsection = Mainsection::where('id',$id)->delete();
+            return response()->json(['status' =>'success','success'=> "Main Section deleted Successfully!"]);
         }
-        return response()->json(['status' => 'failed', 'message' => 'No section found']);
+      
+        // return response()->json(['success'=>'Mainsection deleted successfully.']);
     }
+
+
+
+
 
 
 

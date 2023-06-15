@@ -16,7 +16,7 @@ class Subsection extends Model
     protected $fillable = [
         'id',
         'subsectionname',
-        'description',
+        'subdescription',
         'section_id'
     ];
 

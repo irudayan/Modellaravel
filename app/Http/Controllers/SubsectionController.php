@@ -14,12 +14,6 @@ class SubsectionController extends Controller
 {
     public function subsection(Request $request)
     {
-
-        // dd($request);
-
-        // $hello = Subsection::all();
-        // dd($hello);
-
         if ($request->ajax()) {
             $sub = Subsection::OrderBy('id','desc')->get();
 
@@ -36,17 +30,19 @@ class SubsectionController extends Controller
                         return $subsectionname;
                     })
                     ->addColumn('description', function($row){
-                        $description ='';
-                        $description = $description.'<span data-original-title="view" >'.$row->description.'</span>';
-                        return $description;
+                        $subdescription ='';
+                        $subdescription = $subdescription.'<span data-original-title="view" >'.$row->subdescription.'</span>';
+                        return $subdescription;
                     })
                     ->addColumn('action', function($row){
    
                            $btn = '<a href="javascript:void(0)" data-toggle="tooltip"  
-                           data-id="'.$row->id.'" data-original-title="Edit" class="edit btn btn-primary btn-sm editsubSection">Edit</a>';
+                           data-id="'.$row->id.'" data-original-title="Edit" class="edit btn btn-primary btn-sm editsubSection">
+                           <i class="fas fa-edit"></i></a>';
    
                            $btn = $btn.' <a href="javascript:void(0)" data-toggle="tooltip"  
-                           data-id="'.$row->id.'" data-original-title="Delete" class="btn btn-danger btn-sm deletesubSection">Delete</a>';
+                           data-id="'.$row->id.'" data-original-title="Delete" class="btn btn-danger btn-sm deletesubSection">
+                           <i class="fas fa-trash" ></i></a>';
     
                             return $btn;
                     })
@@ -59,10 +55,14 @@ class SubsectionController extends Controller
                     ->leftjoin('mainsection','mainsection.id','=','subsections.section_id')
                     ->select('mainsection.name')
                     ->get();
+                    dd($mainname);
+   return response()
+    ->json($sub)
+    ->view('backend.include.mainsection', compact('mainname'));
 
-        // dd($mainname);
-        // // return Response::json($subsection);
-        return view('backend.include.mainsection', compact('mainname'));
+     
+    //    return Response::json($subsection);
+    //     return view('backend.include.mainsection', compact('mainname'));
     }
 
     public function subsectionstore(Request $request)
@@ -74,10 +74,11 @@ class SubsectionController extends Controller
             [
                 // 'mainsectionname' => $request->mainsectionname,
                 'subsectionname' => $request->subsectionname,
-                'description' => $request->description,
+                'subdescription' => $request->subdescription,
                 'section_id' => $request->section_id
             ]
         );
+        // dd($subsection);
 
         if ($subsection) {
             return response()->json(['status' => 'success', 'data' => $subsection]);
@@ -90,7 +91,7 @@ class SubsectionController extends Controller
     {
        
         $subsectionedit = Subsection::find($id);
-        // dd($subsectionedit);
+        
         return response()->json($subsectionedit);
     }
 
